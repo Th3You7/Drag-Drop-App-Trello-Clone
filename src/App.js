@@ -1,25 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext } from "react";
+import Column from "./Column";
+import DrgDrpContext from "./Providers/DragDropProvider";
+import { DragDropContext } from "react-beautiful-dnd";
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+  display: flex;
+`;
 
 function App() {
+  const { state, onDragEnd } = useContext(DrgDrpContext);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Wrapper>
+        {state.columnsOrder.map((columnId, index) => {
+          const column = state.columns[columnId];
+          const isEditing = column.isEditing;
+          const task = column.tasksOrder.map((taskId) => state.tasks[taskId]);
+          return (
+            <Column
+              key={column.id}
+              tasks={task}
+              index={index}
+              column={column}
+              isEditing={isEditing}
+            />
+          );
+        })}
+      </Wrapper>
+    </DragDropContext>
   );
 }
 
